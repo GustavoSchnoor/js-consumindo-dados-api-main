@@ -1,13 +1,16 @@
-const consultaCEP = fetch('https://viacep.com.br/ws/01001000/json/') // Os .then() abaixo, poderiam ficar na frente AQUI, mas eu deixei abaixo para ficar mais bonito
-    .then(resposta => resposta.json())
-    .then(resp => {
-        if(resp.erro) { // Na documentação da API, tem um campo no objeto, com o nome de "erro". Se ele tiver TRUE, é que o CEP esta preenchido corretamente, POREM ELE NAO EXISTE
-            throw Error('Esse CEP nao existe!')
-        } else {
-            console.log(resp);
-        }
-    })
-    .catch(erro => console.log(erro))
-    .finally(mensagem => console.log('Processamento concluído'))
+async function buscaEndereco(cep) {
+    try {
+        var consultaCEP = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        consultaCEPConvertida = await consultaCEP.json();
 
-console.log(consultaCEP);
+        if (consultaCEPConvertida.erro) { // PARTICULARIDADE DA API, pois se o objeto.erro retornar como TRUE é porque o CEP foi preenchido certo, porem ele NÃO EXISTE
+            throw Error('CEP não existente!')
+        }
+
+        console.log(consultaCEPConvertida);
+        return consultaCEPConvertida;
+
+    } catch (erro) {
+        console.log(erro);
+    }
+}
